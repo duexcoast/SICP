@@ -111,3 +111,18 @@
 
 (sqrt 123456789012345)
 (sqrt .00000000123456)
+
+;;; Exercise 1.8
+
+(define (cbrt-iter guess x)
+  (if (good-enough? guess (improvecube guess x))
+      guess
+      (cbrt-iter (improvecube guess x) x)))
+
+(define (improvecube guess x)
+  (/ (+ (/ x (square guess)) (* 2 guess)) 3))
+
+(define (cuberoot x)
+  (cbrt-iter 1.0 x))
+
+(cuberoot 20)
