@@ -4,11 +4,11 @@
   (cond (predicate then-clause)
         (else else-clause)))
 
-;(define (sqrt-iter guess x)
- ; (if (good-enough? guess x)
-  ;    guess
-   ;   (sqrt-iter (improve guess x)
-    ;            x)))
+(define (sqrt-iter guess x)
+  (if (good-enough? guess x)
+      guess
+      (sqrt-iter (improve guess x)
+                x)))
 
 (define (improve guess x)
   (average guess (/ x guess)))
@@ -16,8 +16,8 @@
 (define (average x y)
   (/ (+ x y) 2))
 
-;(define (good-enough? guess x)
- ; (< (abs (- (square guess) x)) 0.001))
+(define (good-enough? guess x)
+  (< (abs (- (square guess) x)) 0.001))
 
 (define (square x)
   (* x x))
@@ -25,7 +25,7 @@
 (define (sqrt x)
   (sqrt-iter 1.0 x))
 
-;(sqrt 2000)
+(sqrt 9)
 ;;; Exercise 1.5
 (define (p) (p))
 (define (test x y)
@@ -33,7 +33,7 @@
       0
       y))
 
-;(test 0 (p))
+(test 0 (p))
 
 ; The above procedure will result in an infinite loop if performed with applicative
 ; order evaluation. The interpreter will evaluate all the arguments and then apply the
@@ -44,9 +44,9 @@
 ; Alternatively, an interpreter that uses normal order evaluation would not evaluate the
 ; operands until their values are actaully needed. In which case, (test 0 (p)) would be
 ; expaned to:
-;(if (= 0 0)
- ;   0
-  ;  p)
+(if (= 0 0)
+    0
+    p)
 ; Since the predicate, (= 0 0) evaluates to true, then only the consequent is evaluated,
 ; and the alternative (p) is ignored.
 
@@ -83,31 +83,4 @@
 
 ; With applicative-order evaluation we "evaluate the arguments and *then* apply", which
 ; is what the Scheme interpreter actaully does. However, it is important to understand normal-
-; order evaluation, as it can be an extremely valuable tool.
-
-;;; Exercise 1.7
-; The `good-enough?` test fails for both very large and very small numbers, albeit, for different
-; reasons.
-
-; With large numbers, floating point arithmetic causes the difference between numbers to sometimes
-; be larger than the delta we defined in our test. This means that due to a rounding error, we will
-; never pass the test. and will always return the same number (that is larger than .001)
-
-; With small numbers, the test fails because .001 as a delta isn't adequate for finding the square
-; root of numbers smaller than .001. It will return a "correct" result way too early.
-
-; Although the nature of the problems is different, they can both be solved with the same solution.
-; If we make `good-enough?` adaptive, we can deal with the difference between our current guess and
-; our previous guess. This will allow us to drill in with much more precision, as well as to not rely
-; on `x` anymore, which was causing our rounding error problems with larger numbers.
-
-(define (good-enough? previous-guess guess)
-  (< (abs (/ (- guess previous-guess) guess)) 0.00000000001))
-
-(define (sqrt-iter guess x)
-  (if (good-enough? guess (improve guess x))
-      guess
-      (sqrt-iter (improve guess x) x)))
-
-(sqrt 123456789012345)
-(sqrt .00000000123456)
+; order evaluation, as it can be an extremely valuable tool. 
