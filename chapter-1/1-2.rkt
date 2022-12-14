@@ -1,4 +1,5 @@
 #lang sicp
+(#%require racket/trace)
 
 (define (fib n)
   (cond ((= n 0) 0)
@@ -154,9 +155,99 @@
 ; logarithmic time O(log(a))
 
 ;;; Exponentiation
+
+;; linear recursive process
 (define (expt b n)
   (if (= n 0)
       1
       (* b (expt b (- n 1)))))
 (expt 10 3)
 
+;; linear iterative process
+(define (exp b n)
+  (exp-iter b n 1))
+
+(define (exp-iter b counter product)
+  (if (= counter 0)
+      product
+      (exp-iter b (- counter 1) (* b product))))
+  
+(exp 10 3)
+
+;;; Successive squaring recursive process
+(define (square x) (* x x))
+
+(define (fast-expt b n)
+(cond ((= n 0) 1)
+      ((even? n) (square (fast-expt b (/ n 2))))
+      (else (* b (fast-expt b (- n 1))))))
+
+(fast-expt 10 4)
+
+;;; Exercise 1.16
+
+; Successive squaring iterative process
+
+(define (fast-expt-iter a b n)
+  (cond ((= n 0)
+         a)
+       ((even? n)
+        (fast-expt-iter a (* b b) (/ n 2)))
+       (else
+        (fast-expt-iter (* a b) b (- n 1)))))
+
+(fast-expt-iter 1 12 2)
+
+;; Multiplication using only addition primative
+(define (mult a b)
+  (if (= b 0)
+      0
+      (+ a (mult a (- b 1)))))
+
+; helper functions
+(define (halve x) (/ x 2))
+
+(define (double x) (* 2 x))
+; fast mult
+(define (fast-mult a b)
+  (cond ((= b 1) a)
+        ((even? b)
+         (fast-mult (double a) (halve b)))
+         (else
+          (+ a (fast-mult a (- b 1))))))
+
+(fast-mult 2 4)
+
+(define (fast-mult2 a b)
+  (cond ((= b 0)
+         0)
+        ((even? b)
+         (fast-mult2 (double a) (halve b)))
+        (else
+         (+ a (fast-mult a (- b 1))))))
+
+; The difference between those two different versions above is
+; the base case. In the first one I made the base case 1, and
+; returned the value of a, in the second one I made the base case 0
+; and returned 0. So when (= b 1), the process went to the `else`
+; condition and returned (+ a 0). So they did exactly the same thing,
+; the second version is just cleaner.
+
+;;; Exercise 1.18
+
+; In order to make this procedure iterative, we needed to find an invariant to track as a
+; state variable throughout our iterative transformations. The way we did this was to
+; track a new state variable c. On the odd step, we add (+ a c), and return c at the end.  
+
+(define (fast-mult-iter a b c)
+  (cond ((= b 0)
+        c)
+        ((even? b)
+         (fast-mult-iter (double a) (halve b) c))
+        (else
+         (fast-mult-iter a (- b 1) (+ c a)))))
+
+(trace fast-mult-iter)
+(fast-mult-iter 5 5 0)
+         
+         
