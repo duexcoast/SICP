@@ -35,7 +35,7 @@
         ((= kinds-of-coins 3) 10)
         ((= kinds-of-coins 4) 25)
         ((= kinds-of-coins 5) 50)))
-(count-change 11)
+;(count-change 11)
 
 (define (count-stairs n)
   (cond ((= n 1) 1)
@@ -151,7 +151,7 @@
       angle
       (p (sine (/ angle 3.0)(+ step 1)))))
 
-(sine 12.15 1)
+;(sine 12.15 1)
 ; logarithmic time O(log(a))
 
 ;;; Exponentiation
@@ -161,7 +161,7 @@
   (if (= n 0)
       1
       (* b (expt b (- n 1)))))
-(expt 10 3)
+;(expt 10 3)
 
 ;; linear iterative process
 (define (exp b n)
@@ -172,7 +172,7 @@
       product
       (exp-iter b (- counter 1) (* b product))))
   
-(exp 10 3)
+;(exp 10 3)
 
 ;;; Successive squaring recursive process
 (define (square x) (* x x))
@@ -182,7 +182,7 @@
       ((even? n) (square (fast-expt b (/ n 2))))
       (else (* b (fast-expt b (- n 1))))))
 
-(fast-expt 10 4)
+;(fast-expt 10 4)
 
 ;;; Exercise 1.16
 
@@ -196,7 +196,7 @@
        (else
         (fast-expt-iter (* a b) b (- n 1)))))
 
-(fast-expt-iter 1 12 2)
+;(fast-expt-iter 1 12 2)
 
 ;; Multiplication using only addition primative
 (define (mult a b)
@@ -216,7 +216,7 @@
          (else
           (+ a (fast-mult a (- b 1))))))
 
-(fast-mult 2 4)
+;(fast-mult 2 4)
 
 (define (fast-mult2 a b)
   (cond ((= b 0)
@@ -247,7 +247,90 @@
         (else
          (fast-mult-iter a (- b 1) (+ c a)))))
 
-(trace fast-mult-iter)
+;(trace fast-mult-iter)
 (fast-mult-iter 5 5 0)
-         
-         
+
+;;; Exercise 1.19
+
+(define (fib-log n)
+  (fib-iter-log 1 0 0 1 n))
+
+(define (fib-iter-log a b p q count)
+  (cond ((= count 0) b)
+        ((even? count)
+         (fib-iter a
+                   b
+                   ; <compute p'>
+                   ; <compute q'>
+                   (/ count 2)))
+         (else (fib-iter-log (+ (* b q) (* a q) (* a p))
+                             (+ (* b p) (* a q) (* a q))
+                             p
+                             q
+                             (- count 1)))))
+
+;;; 1.25 Greatest Common Divisor's
+
+; Euclid's Algorithm:
+; Time: O(log n)
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+
+;(gcd 4 16)
+;;; Testing for Primality
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+  ((divides? test-divisor n) test-divisor)
+  (else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+;;; The Fermat Test
+
+; Fermat's Little Theorem states that if n is a prime number,
+; and `a` is any integer less than `n`, then a raised to the n-th power
+; is congruent to `a (mod n)`
+
+; We can use this theorem to test for primality by picking a random number `a`,
+; such that a < n, then computing the remainder of a^n modulo n. If the result is
+; is not equal to a, then we can be certain that n is not prime.
+
+; On the other hand, if a^n % n = a then there's a high likelyhood that n is prime.
+; We can repeatedly test for different values of a, becoming more certain each time.
+
+; Use successive squaring to compute the exponential of a number modulo another number
+
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+         ((even? exp)
+          (remainder (square (expmod base (/ exp 2) m))
+                     m))
+         (else
+          (remainder (* base (expmod base (- exp 1) m))
+                     m))))
+
+; implement fermat's test by checking the equality of expmod with
+; a random value for a (using the random primitive, which returns a
+; non-negative int smaller than it's input parameter).
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else false)))
+
+(fast-prime? 54353 4)
