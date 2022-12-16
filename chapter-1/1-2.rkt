@@ -248,7 +248,7 @@
          (fast-mult-iter a (- b 1) (+ c a)))))
 
 ;(trace fast-mult-iter)
-(fast-mult-iter 5 5 0)
+#| (fast-mult-iter 5 5 0) |#
 
 ;;; Exercise 1.19
 
@@ -333,4 +333,74 @@
         ((fermat-test n) (fast-prime? n (- times 1)))
         (else false)))
 
-(fast-prime? 54353 4)
+(fast-prime? 617 4)
+
+;;; Probabilistic Algorithms
+
+; There are variations of Fermat's Test that cannot be fooled. The way they work
+; is by testing for conditions that only hold if n is prime, rather than the other 
+;  way around. One variation of this type can improve the likelyhood that n is prime
+;  by 50% each time. Thus, with repeated testing, the chance of error becomes arbitrarily
+;  small. These types of algorithms, which reduce the chance of error on each iteration,
+;  are known as probabilistic algorihms.
+;
+;;;  Exercise 1.21
+(smallest-divisor 199)
+; 199 **Prime**
+(smallest-divisor 1999)
+; 1999 **Prime**
+(smallest-divisor 19999)
+; 7 not prime
+
+
+;;; Exercise 1.22
+
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (runtime)))
+
+(define (start-prime-test n start-time)
+  (if (prime? n)
+  (report-prime (- (runtime) start-time))))
+
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (display elapsed-time))
+
+#| (define (search-for-primes low high total)) |#
+
+#| (timed-prime-test 1999) |#
+
+(define (search-for-primes n count)
+  (cond ((= count 0) 0)
+        ((prime? n) (timed-prime-test n)
+                    (search-for-primes (+ n 2) (- count 1)))
+        ((even? n) (search-for-primes (+ n 1) count))
+        (else (search-for-primes (+ 2 (+ n 1)) count))))
+
+(search-for-primes 1000 3)
+; Results:
+; 1009 *** 1
+; 1019 *** 1
+; 1021 *** 10
+        
+(search-for-primes 10000 3)
+; Results:
+; 10009 *** 10
+; 10039 *** 3
+; 10061 *** 20
+
+
+(search-for-primes 100000 3)
+; Results:
+; 100049 *** 8
+; 100103 *** 5
+; 100109 *** 60
+
+
+(search-for-primes 100000000 3)
+; Results:
+; 100000037 *** 191
+; 100000039 *** 188
+; 100000049 *** 1750
