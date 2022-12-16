@@ -281,13 +281,18 @@
 ;(gcd 4 16)
 ;;; Testing for Primality
 
+(define (next test-divisor)
+  (if (= test-divisor 2) 
+    3
+    (+ test-divisor 2)))
+
 (define (smallest-divisor n)
   (find-divisor n 2))
 
 (define (find-divisor n test-divisor)
   (cond ((> (square test-divisor) n) n)
   ((divides? test-divisor n) test-divisor)
-  (else (find-divisor n (+ test-divisor 1)))))
+  (else (find-divisor n (next test-divisor)))))
 
 (define (divides? a b)
   (= (remainder b a) 0))
@@ -361,46 +366,58 @@
   (start-prime-test n (runtime)))
 
 (define (start-prime-test n start-time)
-  (if (prime? n)
+  (if (fast-prime? n 100)
   (report-prime (- (runtime) start-time))))
 
 (define (report-prime elapsed-time)
   (display " *** ")
   (display elapsed-time))
 
-#| (define (search-for-primes low high total)) |#
-
 #| (timed-prime-test 1999) |#
 
-(define (search-for-primes n count)
-  (cond ((= count 0) 0)
-        ((prime? n) (timed-prime-test n)
-                    (search-for-primes (+ n 2) (- count 1)))
-        ((even? n) (search-for-primes (+ n 1) count))
-        (else (search-for-primes (+ 2 (+ n 1)) count))))
+#| (define (search-for-primes low high total)) |#
 
-(search-for-primes 1000 3)
+(define (search-for-primes start-range end-range)
+        (if (even? start-range) 
+         (search-for-primes (+ 1 start-range) end-range)
+         (cond ((> start-range end-range)
+                (newline) (display "done"))
+               (else (timed-prime-test start-range)
+                     (search-for-primes (+ 2 start-range) end-range)))))
+               
+(search-for-primes 100000000 100000100 )
+(search-for-primes 1000000000 1000000100 )
+
 ; Results:
 ; 1009 *** 1
 ; 1019 *** 1
 ; 1021 *** 10
         
-(search-for-primes 10000 3)
+#| (search-for-primes 100000000000 100000000100 ) |#
 ; Results:
 ; 10009 *** 10
 ; 10039 *** 3
 ; 10061 *** 20
 
 
-(search-for-primes 100000 3)
+#| (search-for-primes 100000000000000 100000000000100 ) |#
 ; Results:
 ; 100049 *** 8
 ; 100103 *** 5
 ; 100109 *** 60
 
 
-(search-for-primes 100000000 3)
+#| (search-for-primes 100000000000000000 100000000000000100 ) |#
 ; Results:
 ; 100000037 *** 191
 ; 100000039 *** 188
 ; 100000049 *** 1750
+
+;;; Exercise 1.23
+; Results
+
+;100000000000000003 *** 3318042
+;100000000000000013 *** 3366311
+;100000000000000019 *** 3342031
+;;; Exercise 1.24
+; 
