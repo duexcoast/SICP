@@ -1,6 +1,7 @@
+;
+;
 #lang sicp
 (#%require racket/trace)
-
 (define (fib n)
   (cond ((= n 0) 0)
         ((= n 1) 1)
@@ -385,8 +386,8 @@
                (else (timed-prime-test start-range)
                      (search-for-primes (+ 2 start-range) end-range)))))
                
-(search-for-primes 100000000 100000100 )
-(search-for-primes 1000000000 1000000100 )
+#| (search-for-primes 100000000 100000100 ) |#
+#| (search-for-primes 1000000000 1000000100 ) |#
 
 ; Results:
 ; 1009 *** 1
@@ -421,3 +422,49 @@
 ;100000000000000019 *** 3342031
 ;;; Exercise 1.24
 ; 
+;;; Exercise 1.31
+;;; Exercise 1.33
+
+(define (filtered-accumulate predicate? combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner
+       (if (predicate? a) (term a) null-value)
+       (filtered-accumulate predicate? combiner null-value term (next a) next b))))
+
+(define (sum-of-squares-prime a b)
+  (filtered-accumulate prime? + 0 square a inc b))
+
+(define (relative-prime? i n)
+  (= (gcd i n) 1))
+
+(define (identity x) x)
+
+(define (product-of-relative-prime n)
+  (define (relative-prime? i)
+    (= (gcd i n) 1))
+  (filtered-accumulate relative-prime? * 1 identity 1 inc n))
+
+(+ (let ((x 3))
+     (+ x (* x 10)))
+   5)
+
+(define (fn x y)
+  ((lambda (a b)
+     (+ (* x (square a))
+        (* y b)
+        (* a b)))
+   (+ 1 (* x y))
+   (- 1 y)))
+
+;;; Exercise 1.34
+
+(define (fnc g)
+  (g 2))
+
+(fnc square)
+
+(fnc (lambda (z) (* z (+ z 1))))
+
+#| (fnc fnc) |#
+; not  a procedure. Evaluates to (2 2)
