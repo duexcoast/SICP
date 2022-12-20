@@ -156,3 +156,41 @@ whose returned values are themselves procedures.
 Lets revisit average damping, which we used to allow the fixed-point function for square roots
 to converge. Put simply, average damping is performed when, given a function `f`, we consider
 the function whose value at `x` is equal to the average of `x` and `f(x)`.
+
+```scheme
+(define (average-damp f)
+  (lambda (x) (average x (f x))))
+```
+Here `average-damp` is a procedure which takes as it's argument `f`, and returns as its value a 
+procedure that, when applied to a number `x`, produces the average of `x` and `(f x)`.
+
+We can reformulate our square-root procedure using `average-damp`:
+
+```scheme
+(define (sqrt x)
+  (fixed-point (average-damp (lambda (y) (/ x y)))
+                1.0))
+```
+
+It's especially worth noting here how clearly this formulation makes explicit the three ideas
+in the method: fixed-point search, average damping, and the funciton y -> x/y.
+By using higher-order procedures, we're able to create extremely legible code. Abstracted at 
+the right levels to make reusable components available elsewhere in our application. 
+
+### First-Class Functions
+Lisp has first class functions, which is a way to describe the 'rights and priveleges' awarded 
+to them, in relation to restrictions a programming language may place on the ways other elements
+can be manipulated.
+
+To have first-class status means:
+
+1. They may be named by variables
+2. They may be passed as arguments to procedures.
+3. They may be returned as the results of procedures.
+4. They may be included in data structures.
+
+Giving functions first-class status poses challenges for efficient implementation, mainly that 
+allowing procedures to be returned as values requires reserving storage for a procedure's free
+variables even while the procedure is not executing. In one Scheme implementation these variables
+are stored in teh procedures environment. While efficient implementation is made difficult, the
+resulting gain in expressive power is enormous.

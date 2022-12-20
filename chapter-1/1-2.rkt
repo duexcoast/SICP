@@ -548,3 +548,44 @@
 
 ;;; Exercise 1.37
 ;;; 
+
+(define (average-damp f)
+  (lambda (x) (average x (f x))))
+
+;;; Derivatives
+(define dx 0.00001)
+
+(define (deriv g)
+  (lambda (x)
+    (/ (- (g (+ x dx)) (g x))
+       dx)))
+
+(define (cube2 x) (* x x x))
+
+; (deriv cube) gives us the derivative function of cube, which we are then 
+; providing with the argument 5.
+((deriv cube) 5)
+
+; we can express Newton's method as a fixed-point process with the help of deriv:
+
+(define (newton-transform g)
+  (lambda (x)
+    (- x (/ (g x) ((deriv g) x)))))
+
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+(define (sqrt2 x)
+  (newtons-method (lambda (y) (- (square y) x))
+                  1.0))
+
+(sqrt2 55)
+
+; abstraction for our various square root methods, which each begin with a 
+; function, and find a fixed point of some transformation of the function:
+
+(define (fixed-point-of-transform g transform guess)
+  (fixed-point (transform g) guess))
+
+
+
