@@ -520,4 +520,13 @@
 (fixed-point cos 1.0)
 
 (fixed-point (lambda (y) (+ (sin y) (cos y))) 1.0)
-      
+
+#| (define (sqrt x) |#
+#|   (fixed-point (lambda (y) (/ x y)) |#
+#|                1.0)) |#
+
+(define (sqrt x)
+  (fixed-point (lambda (y) (average y (/ x y)))
+                 1.0))
+  
+
