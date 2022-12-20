@@ -147,3 +147,12 @@ so now we are looking for the fixed-point of `y = 1/2 (y + x/y)`:
   (fixed-point (lambda (y) (average y (/ x y))
                 1.0))
 ```
+
+### Procedures as returned values
+The ability to pass procedures as arguments significantly enhances the expressive power 
+of our programming language. The natural continuation of this idea is to create procedures 
+whose returned values are themselves procedures.
+
+Lets revisit average damping, which we used to allow the fixed-point function for square roots
+to converge. Put simply, average damping is performed when, given a function `f`, we consider
+the function whose value at `x` is equal to the average of `x` and `f(x)`.
