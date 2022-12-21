@@ -102,16 +102,17 @@ We've created various levels of data abstraction barriers. Each level provides
 an interface to the data abstraction below. By modularizing our system with levels
 we make it easy to change implementation details. 
 
---------
+- - - - - - - - - - - - - - - - - - - -
 Programs that use rational numbers
---------
+- - - - - - - - - - - - - - - - - - - -
 Rational numbers in the problem domain:
 `add-rat` `sub-rat` ... 
---------
+- - - - - - - - - - - - - - - - - - - -
 Rational numbers as numerators and denominators:
 `make-rat` `numer` `denom`
---------
+- - - - - - - - - - - - - - - - - - - -
 Rational numbers as pairs:
 `cons` `car` `cdr`
+- - - - - - - - - - - - - - - - - - - -
 
-
+### What is Meant by Data?

@@ -108,3 +108,5 @@
 (print-point (midpoint-segment line))
 
 ;;; Exercise 2.3 
+
+(define (make-rectangle line1 line2 line3 line4))
