@@ -116,3 +116,144 @@ Rational numbers as pairs:
 - - - - - - - - - - - - - - - - - - - -
 
 ### What is Meant by Data?
+We think of data as defined by some collection of selectors and constructors, 
+together with specified conditions that these rocedures ust fulfill in order 
+to be a valid representation.
+
+We can implement pairs without using data structures, through procedural
+representation:
+```scheme
+(define (cons x y)
+  (define (dispatch m)
+    (cond ((= m 0) x)
+          ((= m 1) y)
+          (else (error "Argument not 0 or 1 -- CONS" m))))
+  dispatch)
+
+(define (car z) (z 0))
+(define (cdr z) (z 1))```
+```
+
+The thing to note is that `cons` is returning the internally defined procedure
+`dispatch`. We can then get access the separate values stored in a pair with 
+a call like `(car (cons x y))`, which will return `x`.
+
+This may seem trivial, but this type of procedural representation of data shows us
+that the ability to manipulate procedures as objects automatically provides the 
+ability to represent compound data.
+
+This style of programming, using procedural representation of data, is called
+**message passing** and will come up again later in the text.
+
+## λ The Lambda Calculus
+In the Lambda Calculus, all functions are unary, meaning they only take one 
+argument. This means that when a lambda expression takes multiple arguments,
+what is actually happening is a curried function. 
+``````
+λa => f(a)
+λab => f(a)(b)
+
+Function application is left-associative so these parentheses are meaningless:
+λ(a)b => f(a)(b)
+```
+However, parentheses can be used to force applications to happen in a different
+order:
+```
+First we apply `a` to `b`, and the result of that is the argument to `f`
+λ(a b) => f(a(b))
+```
+
+### Abstractions
+```
+λa.b === a => b
+
+λa.b x === a => b(x)
+
+(λa.b) x === (a => b) x
+
+λa.λb.a === a ==> b ==> a
+```
+### Beta Reduction
+The name beta-reduction basically entails tracing the logic, or evaluating 
+the function invocations and seeing what we end up with. Beta-Reduction is 
+the act of taking and applying it to its argument.
+
+```
+((λa.a)λb.λc.b)(x)λe.f
+
+// the first part of this function takes an a
+// and returns an a:
+// (λa.a)
+// We've supplied this function with the argument
+// λb.λc.b
+// We will replace all occururances of a, with that
+// argument (to fullfill λa.a)
+
+(λb.λc.b)(x)λe.f
+
+// now we look into the function body, and replace
+all the b's with x's
+
+(λc.x)λe.f
+
+// at this point we look to replace all c's in
+// the function body with λe.f, but there are no
+// c's, so all we are left with is x.
+
+// We call this beta-normal form, which is just to
+// say that we fully evaluated the function
+
+```
+
+### Self Application Combinator: M - The Mockingbird
+The mockingbird is a function that takes a function, and invokes the function
+on itself:
+`λf.ff`
+```
+M := λf.ff
+
+// or in javascript:
+M = f =>f(f)
+```
+Another syntactical note on lambda expressions is the simplification of 
+`λa.λb.λc.b` to `λabc.b`. But this is not to say that a single lambda expression
+is taking multiple arguments. They are being resolved one at a time, and fed into
+each other. It is a simplified representation of nested lambda expressions.
+```
+λa.λb.λc.b
+
+a => b => c => b
+```
+
+### The Kestrel: K Combinator
+ Takes two things and returns the first one:
+ ```
+λab.a
+ ```
+
+### The Kite: KI Combinator
+Takes two things and returns the second one:
+```
+λab.b
+```
+
+### Combinators
+A combinator is a function with no free variables. A free variable is a variable in 
+a function body that's not bound to some parameter.
+```
+λb.b // combinator
+λb.a // NOT a combinator
+λab.b // combinator
+λb.ab // NOT a combinator
+λabc.c(λe.b) // combinator
+```
+
+### C Combinator: The Cardinal
+`λfab.fba` Takes a function f that takes two parameters. Then it calls that function
+f, with those two parameters, but in opposite order.
+```
+C := λfab.fba
+
+C K I M = 
+```
+

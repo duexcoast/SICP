@@ -87,7 +87,7 @@
 (define (midpoint-segment segment)
   (make-point
     (average (x-point (start-segment segment)) (x-point (end-segment segment)))
-    (average (y-point (start-segment segment)) (y-point (end-segment segment))))))
+    (average (y-point (start-segment segment)) (y-point (end-segment segment)))))
 
 ; Print points
 (define (print-point p)
@@ -109,4 +109,15 @@
 
 ;;; Exercise 2.3 
 
-(define (make-rectangle line1 line2 line3 line4))
+#| (define (make-rectangle line1 line2 line3 line4)) |#
+
+;;; Exercise 2.4
+
+#| Exercise 2.6 |#
+#| Church Numerals |#
+
+(define zero (lambda (f) (lambda (x) x)))
+
+(define (add-1 n)
+  (lambda (f) (lambda (x) (f ((n f) x)))))
+
